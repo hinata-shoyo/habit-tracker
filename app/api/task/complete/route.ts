@@ -4,7 +4,10 @@ import { z } from "zod";
 
 const completeTaskSchema = z.object({
   taskId: z.string(),
-  completedOn: z.string().transform((val)=> new Date(val)),
+  completedOn: z
+    .string()
+    .transform((val) => new Date(val))
+    .optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -15,12 +18,13 @@ export async function POST(req: NextRequest) {
       completedOn: data.completedOn,
     },
   });
+  console.log(completed);
   if (completed) {
     try {
       await prismaClient.completed.delete({
         where: {
           id: completed.id,
-          completedOn: data.completedOn,
+          // completedOn: data.completedOn,
         },
       });
       return NextResponse.json({
@@ -50,10 +54,10 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const taskId = req.nextUrl.searchParams.get("taskId");
   const completedTasks = await prismaClient.completed.findMany({
-    where:{
-      taskId:taskId || ""  
-    }
-  })
+    where: {
+      taskId: taskId || "",
+    },
+  });
 
   return NextResponse.json({ completedTasks });
 }

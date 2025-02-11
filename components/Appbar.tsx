@@ -9,7 +9,7 @@ export default function Appbar() {
   const useTheme: ContextType = useContext(themeContext);
 
   return (
-    <div className="absolute top-0 w-full h-24 bg-blend-lighten border-b-[0.5px] dark:border-gray-600 border-black border-opacity-50  dark:text-white  ">
+    <div className="fixed backdrop-blur-lg shadow-md top-0 w-full h-24 backgroun border-b-[0.5px] dark:border-gray-600 border-black border-opacity-50 dark:text-white">
       <div className="flex justify-between mx-12 lg:mx-96 items-center h-full ">
         <div className="flex">
           <div className="font-extrabold text-xl">HabitTracker</div>
