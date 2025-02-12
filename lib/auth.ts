@@ -1,6 +1,6 @@
 import { AuthOptions, getServerSession } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
-import { prismaClient } from "./db";
+import { prisma as prismaClient } from "./db";
 
 const authOptions: AuthOptions = {
   // Configure one or more authentication providers

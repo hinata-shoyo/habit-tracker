@@ -9,7 +9,12 @@ import ActivityCalendar, {
 import { Task } from "./DashboardPage";
 import { themeContext } from "./providers";
 
-export const Activityy: React.FC<Task> = ({ id, name, gettasks }) => {
+export const Activityy: React.FC<Task> = ({
+  id,
+  name,
+  gettasks,
+  createdAt,
+}) => {
   interface Completed {
     completedOn: string;
   }
@@ -18,6 +23,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks }) => {
   const [loading, setLoading] = useState(false);
   const [delLoading, setDelLoading] = useState(false);
   const today = new Date().toJSON().split("T")[0];
+
   const getCompletes = async () => {
     try {
       const response = await fetch(`/api/task/complete?taskId=${id}`, {
@@ -46,10 +52,26 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks }) => {
   };
 
   const startDate = (completed: Completed[]): Activity[] => {
-    const grouped = completed.map((curr) => {
-      const date = curr.completedOn.split("T")[0];
-      return { date: date, count: 1, level: 4 };
-    });
+    const formatDate = (date: Date) => {
+      return date.toLocaleDateString("en-CA"); // Ensures correct local YYYY-MM-DD format
+    };
+    const normalizeDate = (date: Date) => {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate()); // Resets time to 00:00:00
+    };
+    const completedDates = new Set(
+      completed.map((curr) => curr.completedOn.split("T")[0]),
+    );
+    const startDate = normalizeDate(new Date(createdAt));
+    const toDate = normalizeDate(new Date(today));
+    const grouped = [];
+    for (let i = new Date(startDate); i <= toDate; i.setDate(i.getDate() + 1)) {
+      const date = formatDate(i);
+      grouped.push({
+        date: date,
+        count: 0,
+        level: completedDates.has(date) ? 4 : 1,
+      });
+    }
     grouped.unshift({ date: subtractSixMonths(), count: 0, level: 0 });
     const nextDate = new Date(today);
     nextDate.setDate(nextDate.getDate() + 4);
@@ -63,7 +85,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks }) => {
 
   const explicitTheme: ThemeInput = {
     light: ["#c9c2bd", "#857ab4", "#7DB9B6", "#F5E9CF", "#8e51ff"],
-    dark: ["#383838", "#857ab4", "#7DB9B6", "#F5E9CF", "#8e51ff"],
+    dark: ["#383838", "#676378", "#7DB9B6", "#F5E9CF", "#8e51ff"],
   };
 
   const handleComplete = async () => {
@@ -101,7 +123,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks }) => {
       setDelLoading(false);
     }
   };
-  const useTheme = useContext(themeContext) 
+  const useTheme = useContext(themeContext);
 
   return (
     <div className="dark:text-white ">

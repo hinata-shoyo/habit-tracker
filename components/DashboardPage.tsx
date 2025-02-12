@@ -21,6 +21,7 @@ import { Activityy } from "@/components/Activity";
 export interface Task {
   id: string;
   name: string;
+  createdAt:Date,
   gettasks: () => Promise<void>;
 }
 
@@ -66,11 +67,12 @@ export default function DashboardPage(): React.ReactNode {
   return (
    <div className="dark:text-white bg-stone-200 dark:bg-zinc-900">
       <Appbar />
+
       <div className="dark:text-white gap-6 lg:gap-10 text-3xl grid lg:grid-cols-2 grid-cols-1 w-full h-full my-40 lg:my-44 px-4 container mx-auto lg:px-72">
         {tasks.map((task: Task) => {
           return (
             <div key={task.id}>
-              <Activityy name={task.name} id={task.id} gettasks={getTasks} />
+              <Activityy name={task.name} id={task.id} gettasks={getTasks} createdAt={task.createdAt}/>
             </div>
           );
         })}

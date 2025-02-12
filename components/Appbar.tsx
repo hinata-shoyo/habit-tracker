@@ -29,7 +29,7 @@ export default function Appbar() {
                 </button>
                 <button
                   className="block lg:hidden cursor-pointer"
-                  onClick={() => signOut}
+                  onClick={() => signOut({callbackUrl:"/"})}
                 >
                   <LogOut
                     className="block lg:hidden cursor-pointer"
