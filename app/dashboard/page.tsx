@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard(): React.ReactNode {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -45,13 +46,13 @@ export default function Dashboard(): React.ReactNode {
     getTasks();
   }, []);
 
-  const {data:session} = useSession() 
+  const { data: session } = useSession();
   const handleCreate = async () => {
     if (name !== "") {
       try {
         const response = await fetch("/api/task", {
           method: "POST",
-          body: JSON.stringify({ name: name, userId:session?.user?.id}),
+          body: JSON.stringify({ name: name, userId: session?.user?.id }),
         });
         const data = await response.json();
         console.log(data);
@@ -64,6 +65,11 @@ export default function Dashboard(): React.ReactNode {
       console.log(":<");
     }
   };
+
+  const router = useRouter();
+  // if(!session?.user){
+  //   router.push('/')
+  // }
 
   return (
     <div className="dark:bg-gray-950 dark:text-white bg-stone-200 ">
@@ -123,13 +129,23 @@ const Activityy: React.FC<Task> = ({ id, name, createdAt }) => {
     completedOn: string;
   }
   const [completed, setCompleted] = useState<Completed[]>([]);
+  const [todayCom, setTodayCom] = useState(false);
+  const [loading, setLoading] = useState(false);
   const today = new Date().toJSON().split("T")[0];
+  interface Completed {
+    completedOn: string;
+  }
   const getCompletes = async () => {
     try {
       const response = await fetch(`/api/task/complete?taskId=${id}`, {
         method: "GET",
       });
       const data = await response.json();
+      data.completedTasks.map((comp: Completed) => {
+        if (comp.completedOn.split("T")[0] === today) {
+          setTodayCom(true);
+        }
+      });
       setCompleted(data.completedTasks);
     } catch (e) {
       console.log(e);
@@ -168,6 +184,7 @@ const Activityy: React.FC<Task> = ({ id, name, createdAt }) => {
   };
 
   const handleComplete = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/api/task/complete", {
         method: "POST",
@@ -177,17 +194,27 @@ const Activityy: React.FC<Task> = ({ id, name, createdAt }) => {
         }),
       });
       const data = await response.json();
-      console.log(data);
+      setLoading(false);
+      setTodayCom(!todayCom);
       getCompletes();
-    } catch (e) {}
+    } catch (e) {
+      setLoading(false);
+    }
   };
   return (
     <div className="dark:text-white ">
       <div className="border-2 dark:border-gray-400  border-black rounded-xl p-4">
         <div className="flex justify-between mb-2">
-          <div className="ml-4">{name}</div>
+          <div
+            className={`ml-4 ${todayCom ? "line-through text-violet-400" : ""}`}
+          >
+            {name}
+          </div>
           <div onClick={handleComplete}>
-            <SquareCheck size={30} />
+            <SquareCheck
+              size={30}
+              className={`${todayCom ? "text-violet-400" : "text-white"} ${loading ? "text-gray-700" : ""}`}
+            />
           </div>
         </div>
         <div

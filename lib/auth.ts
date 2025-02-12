@@ -1,34 +1,20 @@
-import { AuthOptions, DefaultSession, getServerSession, Session } from "next-auth";
+import { AuthOptions, getServerSession } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { prismaClient } from "./db";
-import { JWT } from "next-auth/jwt";
 
-// export interface Sessionn extends Session {
-//   user: {
-//     id: string;
-//     name: string;
-//     email: string;
-//   };
-// }
-//
-// export interface user{
-//   id:string,
-//   name:string,
-//   email:string,
-//   image:string
-// }
 const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID || "",
       clientSecret: process.env.GITHUB_SECRET || "",
+      authorization: { params: { scope: "read:user user:email" } },
     }),
 
     // ...add more providers here
   ],
   callbacks: {
-    session: async ({ session, token}) => {
+    session: async ({ session, token }) => {
       if (session.user) {
         try {
           const user = await prismaClient.user.findUnique({
@@ -43,7 +29,7 @@ const authOptions: AuthOptions = {
       }
       return session;
     },
-    signIn:async (params) =>{
+    signIn: async (params) => {
       if (!params.user.email) {
         return false;
       }
