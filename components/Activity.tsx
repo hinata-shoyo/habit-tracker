@@ -22,7 +22,8 @@ export const Activityy: React.FC<Task> = ({
   const [todayCom, setTodayCom] = useState(false);
   const [loading, setLoading] = useState(false);
   const [delLoading, setDelLoading] = useState(false);
-  const today = new Date().toJSON().split("T")[0];
+  const todayy = new Date().toLocaleDateString("en-CA")
+  const today =  new Date(todayy).toJSON().split("T")[0];
 
   const getCompletes = async () => {
     try {
