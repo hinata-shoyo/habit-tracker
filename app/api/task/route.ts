@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prismaClient } from "@/lib/db";
 import { z } from "zod";
-import { getSession} from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 
 const createTaskSchema = z.object({
   name: z.string(),
@@ -9,8 +9,14 @@ const createTaskSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return NextResponse.json({
+      msg: "Unauthorized",
+      status: 403,
+    });
+  }
   try {
-    console.log("h")
     const data = createTaskSchema.parse(await req.json());
     const task = await prismaClient.task.create({
       data: {
@@ -27,10 +33,33 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   const session = await getSession();
+  if (!session?.user.id) {
+    return NextResponse.json({
+      msg: "Unauthorized",
+      status: 403,
+    });
+  }
   const tasks = await prismaClient.task.findMany({
     where: {
       userId: session?.user?.id,
     },
   });
   return NextResponse.json({ tasks });
+}
+
+export async function DELETE(req: NextRequest) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return NextResponse.json({
+      msg: "Unauthorized",
+      status: 403,
+    });
+  }
+  const data = await req.json();
+  const res = await prismaClient.task.delete({
+    where: {
+      id: data.taskId,
+    },
+  });
+  return NextResponse.json({ msg: "Deleted Successfully" });
 }
