@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prismaClient } from "@/lib/db";
 import { z } from "zod";
-import { getSession, Sessionn } from "@/lib/auth";
+import { getSession} from "@/lib/auth";
 
 const createTaskSchema = z.object({
   name: z.string(),
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const session = await getSession() as Sessionn;
+  const session = await getSession();
   const tasks = await prismaClient.task.findMany({
     where: {
       userId: session?.user?.id,
