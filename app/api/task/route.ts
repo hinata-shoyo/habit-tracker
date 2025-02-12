@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prismaClient } from "@/lib/db";
 import { z } from "zod";
-import { getSession, session } from "@/lib/auth";
+import { getSession, Sessionn } from "@/lib/auth";
 
 const createTaskSchema = z.object({
   name: z.string(),
@@ -10,6 +10,7 @@ const createTaskSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("h")
     const data = createTaskSchema.parse(await req.json());
     const task = await prismaClient.task.create({
       data: {
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const session = await getSession() as session;
+  const session = await getSession() as Sessionn;
   const tasks = await prismaClient.task.findMany({
     where: {
       userId: session?.user?.id,

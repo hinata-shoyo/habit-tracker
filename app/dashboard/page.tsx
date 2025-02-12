@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { useSession } from "next-auth/react";
 
 export default function Dashboard(): React.ReactNode {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -44,16 +45,23 @@ export default function Dashboard(): React.ReactNode {
     getTasks();
   }, []);
 
+  const {data:session} = useSession() 
   const handleCreate = async () => {
     if (name !== "") {
       try {
         const response = await fetch("/api/task", {
           method: "POST",
-          body: JSON.stringify({ name: name, userId: tasks[0].userId }),
+          body: JSON.stringify({ name: name, userId:session?.user?.id}),
         });
+        const data = await response.json();
+        console.log(data);
         setName("");
         getTasks();
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      console.log(":<");
     }
   };
 

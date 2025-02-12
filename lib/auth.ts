@@ -1,18 +1,15 @@
-import {
-  AuthOptions,
-  getServerSession,
-  Session,
-} from "next-auth";
+import { AuthOptions, DefaultSession, getServerSession, Session } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { prismaClient } from "./db";
+import { JWT } from "next-auth/jwt";
 
-export interface session extends Session{
-  user:{
-    id:string,
-    name:string,
-    email:string,
-  }
-}
+// export interface Sessionn extends Session {
+//   user: {
+//     id: string;
+//     name: string;
+//     email: string;
+//   };
+// }
 //
 // export interface user{
 //   id:string,
@@ -31,21 +28,22 @@ const authOptions: AuthOptions = {
     // ...add more providers here
   ],
   callbacks: {
-    async session({ session, token} ){
-      const newSession:session = session as session;
-      try{ 
-        const user = await prismaClient.user.findUnique({
-          where: {
-            email: token.email || "",
-          },
-        });
-        if (user) {
-          newSession.user.id = user.id;
-        }
-      } catch (e) {}
+    session: async ({ session, token}) => {
+      if (session.user) {
+        try {
+          const user = await prismaClient.user.findUnique({
+            where: {
+              email: token.email || "",
+            },
+          });
+          if (user) {
+            session.user.id = user.id;
+          }
+        } catch (e) {}
+      }
       return session;
     },
-    async signIn(params) {
+    signIn:async (params) =>{
       if (!params.user.email) {
         return false;
       }
@@ -59,11 +57,10 @@ const authOptions: AuthOptions = {
       } catch (e) {}
       return true;
     },
-    async redirect(params){
-      if(params.url !== '/')
-        return "/dashboard"
-      return params.url
-    }
+    redirect: async (params) => {
+      if (params.url !== "/") return "/dashboard";
+      return params.url;
+    },
   },
   secret: "hasdklfji",
 };
