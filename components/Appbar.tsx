@@ -22,7 +22,7 @@ export default function Appbar() {
             {session.data?.user && (
               <div>
                 <button
-                  className="h-10 hidden lg:block w-28 rounded-md border-[1px] border-violet-500 text-violet-500 dark:text-white"
+                  className="h-10 bg-violet-600 hidden lg:block w-28 rounded-md border-[1px] border-violet-500 text-violet-500 dark:text-white"
                   onClick={() => signOut({ callbackUrl: "/", })}
                 >
                   Logout
@@ -40,7 +40,7 @@ export default function Appbar() {
             )}
             {!session.data?.user && (
               <button
-                  className="h-10  w-28 rounded-md border-[1px] border-violet-500 text-violet-500 dark:text-white"
+                  className="h-10 bg-violet-600 w-28 rounded-md border-[1px] border-violet-500 text-violet-500 dark:text-white"
                 onClick={() => signIn()}
               >
                 Login
