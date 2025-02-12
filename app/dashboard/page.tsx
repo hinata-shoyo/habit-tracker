@@ -6,7 +6,6 @@ export default async function Dashboard() {
   if (!session?.user.id) {
     return <h1>Please log in... </h1>;
   }
-  console.log(session?.user)
   return (
     <div>
       <DashboardPage />

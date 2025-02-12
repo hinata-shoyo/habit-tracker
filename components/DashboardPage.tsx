@@ -86,6 +86,7 @@ export default function DashboardPage(): React.ReactNode {
                 <AlertDialogTitle>Add New Task</AlertDialogTitle>
                 <AlertDialogDescription>
                   <Input
+                    autoComplete="off"
                     id="name"
                     placeholder="Drink piss"
                     className="placeholder:text-zinc-500 focus:border-none"

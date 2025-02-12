@@ -15,6 +15,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
   const [completed, setCompleted] = useState<Completed[]>([]);
   const [todayCom, setTodayCom] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [delLoading, setDelLoading] = useState(false);
   const today = new Date().toJSON().split("T")[0];
   const getCompletes = async () => {
     try {
@@ -83,6 +84,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
   };
 
   const handleDelete = async () => {
+    setDelLoading(true)
     try {
       const response = await fetch("/api/task", {
         method: "DELETE",
@@ -91,8 +93,10 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
         }),
       });
       gettasks()
+      setDelLoading(false)
     } catch (e) {
       console.log(e);
+      setDelLoading(false)
     }
   };
 
@@ -107,12 +111,12 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
           </div>
           <div className="flex gap-4" onClick={handleDelete}>
             <div>
-              <Trash size={30} />
+              <Trash size={30} className={`${delLoading?'opacity-50':''}`} />
             </div>
             <div onClick={handleComplete}>
               <SquareCheck
                 size={30}
-                className={`${todayCom ? "text-violet-400" : "text-white"} ${loading ? "opacity-50" : ""}`}
+                className={`${todayCom ? "text-violet-400" : ""} ${loading ? "opacity-50" : ""}`}
               />
             </div>
           </div>

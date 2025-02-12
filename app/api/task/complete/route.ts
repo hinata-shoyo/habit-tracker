@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth";
 import { prismaClient } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -11,6 +12,13 @@ const completeTaskSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return NextResponse.json({
+      msg: "Unauthorized",
+      status: 403,
+    });
+  }
   const data = completeTaskSchema.parse(await req.json());
   const completed = await prismaClient.completed.findFirst({
     where: {
@@ -52,6 +60,13 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return NextResponse.json({
+      msg: "Unauthorized",
+      status: 403,
+    });
+  }
   const taskId = req.nextUrl.searchParams.get("taskId");
   const completedTasks = await prismaClient.completed.findMany({
     where: {
