@@ -109,8 +109,8 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
           >
             {name}
           </div>
-          <div className="flex gap-4" onClick={handleDelete}>
-            <div>
+          <div className="flex gap-4">
+            <div onClick={handleDelete}>
               <Trash size={30} className={`${delLoading?'opacity-50':''}`} />
             </div>
             <div onClick={handleComplete}>
