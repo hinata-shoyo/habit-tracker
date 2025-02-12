@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { SquareCheck, Trash } from "lucide-react";
 import ActivityCalendar, {
   Activity,
   ThemeInput,
 } from "react-activity-calendar";
 import { Task } from "./DashboardPage";
+import { themeContext } from "./providers";
 
-export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
+export const Activityy: React.FC<Task> = ({ id, name, gettasks }) => {
   interface Completed {
     completedOn: string;
   }
@@ -61,6 +62,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
   };
 
   const explicitTheme: ThemeInput = {
+    light: ["#c9c2bd", "#857ab4", "#7DB9B6", "#F5E9CF", "#8e51ff"],
     dark: ["#383838", "#857ab4", "#7DB9B6", "#F5E9CF", "#8e51ff"],
   };
 
@@ -84,7 +86,7 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
   };
 
   const handleDelete = async () => {
-    setDelLoading(true)
+    setDelLoading(true);
     try {
       const response = await fetch("/api/task", {
         method: "DELETE",
@@ -92,46 +94,52 @@ export const Activityy: React.FC<Task> = ({ id, name, gettasks}) => {
           taskId: id,
         }),
       });
-      gettasks()
-      setDelLoading(false)
+      await gettasks();
+      setDelLoading(false);
     } catch (e) {
       console.log(e);
-      setDelLoading(false)
+      setDelLoading(false);
     }
   };
+  const useTheme = useContext(themeContext) 
 
   return (
     <div className="dark:text-white ">
-      <div className="border-2 dark:border-gray-400  border-black rounded-xl p-4">
+      <div className=" dark:border-gray-400 dark:bg-black bg-stone-300 border-black rounded-md p-2 ">
         <div className="flex justify-between mb-2">
           <div
-            className={`ml-4 ${todayCom ? "line-through text-violet-400" : ""}`}
+            className={`ml-4 text-[1rem] ${todayCom ? "line-through dark:text-violet-400 text-violet-600" : ""}`}
           >
             {name}
           </div>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4 dark:text-gray-300 text-gray-900">
             <div onClick={handleDelete}>
-              <Trash size={30} className={`${delLoading?'opacity-50':''}`} />
+              <Trash
+                size={25}
+                className={`${delLoading ? "opacity-50" : ""} hover:cursor-pointer`}
+              />
             </div>
             <div onClick={handleComplete}>
               <SquareCheck
                 size={30}
-                className={`${todayCom ? "text-violet-400" : ""} ${loading ? "opacity-50" : ""}`}
+                className={`${todayCom ? "dark:text-violet-400 text-violet-600" : ""} ${loading ? "opacity-50" : ""} hover:cursor-pointer`}
               />
             </div>
           </div>
         </div>
         <div
-          className="ovrflow-x-scroll  mx-auto dark:border-gray-400 border-black border-t-2"
+          className="ovrflow-x-scroll  mx-auto dark:border-gray-400 border-black "
           style={{ direction: "rtl" }}
         >
           <ActivityCalendar
             data={startDate(completed)}
             maxLevel={4}
+            blockSize={10}
             hideTotalCount={true}
             hideColorLegend={true}
             hideMonthLabels={true}
             theme={explicitTheme}
+            colorScheme={useTheme?.theme}
           />
         </div>
       </div>

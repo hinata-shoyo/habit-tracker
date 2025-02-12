@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
       completedOn: data.completedOn,
     },
   });
-  console.log(completed);
   if (completed) {
     try {
       await prismaClient.completed.delete({

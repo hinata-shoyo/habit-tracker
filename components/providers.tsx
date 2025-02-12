@@ -2,15 +2,16 @@
 import { SessionProvider } from "next-auth/react";
 import React, { createContext, useEffect, useState } from "react";
 interface themeContextType{
-  theme:string,
+  theme:Theme,
   toggleTheme:()=>void 
 }
+type Theme = "dark" | "light"
 export const themeContext = createContext<themeContextType | null>(null);
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState(() => {
     if(typeof window !== "undefined"){
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem("theme") as Theme;
     return savedTheme || "dark";
     }
     return "dark"

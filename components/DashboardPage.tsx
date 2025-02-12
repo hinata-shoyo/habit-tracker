@@ -21,7 +21,7 @@ import { Activityy } from "@/components/Activity";
 export interface Task {
   id: string;
   name: string;
-  gettasks:()=>Promise<void>
+  gettasks: () => Promise<void>;
 }
 
 export default function DashboardPage(): React.ReactNode {
@@ -61,10 +61,12 @@ export default function DashboardPage(): React.ReactNode {
     }
   };
 
+
+
   return (
-    <div className="dark:bg-gray-950 dark:text-white bg-stone-200 ">
+   <div className="dark:text-white bg-stone-200 dark:bg-zinc-900">
       <Appbar />
-      <div className="dark:text-white gap-10 text-3xl grid lg:grid-cols-2 grid-cols-1 w-full h-full my-44 px-12 container mx-auto lg:px-72">
+      <div className="dark:text-white gap-6 lg:gap-10 text-3xl grid lg:grid-cols-2 grid-cols-1 w-full h-full my-40 lg:my-44 px-4 container mx-auto lg:px-72">
         {tasks.map((task: Task) => {
           return (
             <div key={task.id}>
@@ -78,7 +80,7 @@ export default function DashboardPage(): React.ReactNode {
               <CirclePlus
                 size={50}
                 strokeWidth={"1px"}
-                className="backdrop-blur-lg rounded-full"
+                className="dark:backdrop-blur-lg backdrop-blur-sm rounded-full"
               />
             </AlertDialogTrigger>
             <AlertDialogContent className="dark:bg-zinc-900 w-11/12">
