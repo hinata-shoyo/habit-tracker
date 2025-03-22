@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,15 +19,11 @@ export const metadata: Metadata = {
   icons:'/web-app-manifest-192x192.png'
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession()
-  if(session?.user){
-    redirect('/dashboard')
-  }
 
   return (
     <html lang="en">

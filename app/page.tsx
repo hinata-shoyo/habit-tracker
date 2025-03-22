@@ -1,7 +1,13 @@
 import Appbar from "@/components/Appbar";
 import Image from "next/image";
 import image from "../public/photo-1484480974693-6ca0a78fb36b.webp"
-export default function Home() {
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+export default async function Home() {
+  const session = await getSession()
+  if(session?.user){
+    redirect('/dashboard')
+  }
   
   return (
     <div className="min-h-screen  h-screen bg-stone-200 dark:bg-zinc-900 text-zinc-900 dark:text-white">
