@@ -1,0 +1,24 @@
+name: Keep Aiven Postgres Awake
+
+on:
+  schedule:
+    # Runs every day at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Ping Aiven PostgreSQL
+        env:
+          DATABASE_URL: ${{ secrets.AIVEN_DB_URL }}
+        run: |
+          echo "SELECT 1;" | psql "$DATABASE_URL" || {
+            echo "Ping failed." >&2
+            exit 1
+          }
